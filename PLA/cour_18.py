@@ -15,7 +15,9 @@ x_test, y_test = data_test[:, :4], data_test[:, -1]
 # print(x_train)
 # print(y_train)
 
-b, w = model.pocket(x_train, y_train, epoch = 1, shuffle = True)
+b, w = model.pocket(x_train, y_train, epoch = 2000, shuffle = True, 
+                    x_val = x_test, y_val = y_test)
+                    
 y_pred = model.predict(x_test, b, w)
 # print(y_pred.shape)
 # print(y_test.shape)

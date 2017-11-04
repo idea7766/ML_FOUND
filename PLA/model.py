@@ -27,44 +27,55 @@ def pla(x, y, lr = 1, epoch = 2000, shuffle = True):
     print(update_avg)
     return w[0], w[1:]
 
-def pocket(x, y, update = 50, epoch = 2000, shuffle = True):
+def pocket(x, y, update = 50, epoch = 2000, shuffle = True, x_val = None, y_val = None):
     # define value
     x = np.insert(x, 0, 1, axis = 1)
-    w = np.zeros(x.shape[1])
+    w0 = np.zeros(x.shape[1])
     num_data = x.shape[0]
 
     # initilize
-    w_bst = w
     w_bst_ls = []
-    num_wrong_bst_ls = []
+    err_ls = []
+    val_err_ls =[]
     for i in range(epoch):
+        w = w0
+        w_bst = w
+        err_bst = 1
         count_update = 0
-        num_wrong_bst = num_data
         nxt = 0
         if shuffle:
             x, y = _shuffle(x, y)
         while count_update < update:
             k = nxt % num_data
+            # w = w_bst
             if y[k] != sign(w, x[k]):
                 count_update += 1
                 w = w + y[k] * x[k]
-                num_wrong = 0
-                for j in range(num_data):
-                    if y[j] != sign(w, x[j]):
-                        num_wrong += 1
-                if num_wrong <= num_wrong_bst:
+                y_pred = predict(x[:, 1:], w[0], w[1:])
+                err = err_rate(y, y_pred)
+                if err <= err_bst:
                     w_bst = w
-                    num_wrong_bst = num_wrong
+                    err_bst = err
             nxt += 1
-        print('epoch:', i+1, '\t | num. of wrong:', num_wrong_bst)        
         w_bst_ls.append(w_bst)
-        num_wrong_bst_ls.append(num_wrong_bst)
-    wrong_rate = sum(num_wrong_bst_ls) / (num_data * epoch)
-    print('traing error rate:', wrong_rate)
+        err_ls.append(err_bst)
+
+        if x_val != None and y_val != None:
+            y_val_pred = predict(x_val, w_bst[0], w_bst[1:]) 
+            val_err = err_rate(y_val, y_val_pred)
+            val_err_ls.append(val_err)
+
+        print('epoch:', i+1, '\t | error rate:', 
+                err_bst, '\t | val_error rate:', val_err)        
+
+    train_err_rate = sum(err_ls) / epoch
+    val_err_rate = sum(val_err_ls) / epoch
+    print('traing error rate:', train_err_rate)
+    print('validation error rate:', val_err_rate)    
     return w_bst[0], w_bst[1:]
 
 def predict(x, b, w):
-    result = np.dot(x, w)
+    result = np.dot(x, w) + b
     result = _sign_arr(result)
     return result
         
