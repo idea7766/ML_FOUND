@@ -1,6 +1,7 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
-def pla(x, y, update = 10000 , lr = 1, epoch = 2000, shuffle = True, x_val = None, y_val = None):
+def pla(x, y, update = 10000 , lr = 1, epoch = 2000, shuffle = True, x_val = None, y_val = None, hist_graph = False):
     x = np.insert(x, 0, 1, axis = 1)
     update_ls = []
     count_update = 0
@@ -37,6 +38,13 @@ def pla(x, y, update = 10000 , lr = 1, epoch = 2000, shuffle = True, x_val = Non
         print('val error:', val_err_avg)
     update_avg = sum(update_ls) / epoch
     print(update_avg)
+    if hist_graph:
+        plt.xlim((min(update_ls), max(update_ls)))
+        plt.xlabel('Number of upadtes')
+        plt.ylabel('Frequency')
+        plt.title('8. Update Frequency')
+        plt.hist(update_ls, normed = True, bins = range(min(update_ls), max(update_ls)), alpha = 0.9)
+        plt.show()
     return w[0], w[1:]
 
 def pocket(x, y, update = 50, epoch = 2000, shuffle = True, x_val = None, y_val = None):
