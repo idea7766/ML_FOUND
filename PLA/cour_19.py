@@ -11,13 +11,9 @@ data_test = utils.load_data(DATA_PATH_18_test)
 
 # distinguish x and y
 x_train, y_train = data[:, :4], data[:, -1]
-x_test, y_test = data_test[:, :4], data[:, -1]
+x_test, y_test = data_test[:, :4], data_test[:, -1]
 # print(x_train)
 # print(y_train)
 
-b, w = model.pocket(x_train, y_train, epoch = 2000, shuffle = False)
-y_pred = model.predict(x, b, w)
-print('error rate: ', model.err_rate(y_test))
-
-print('w', w)
-print('b', b)
+b, w = model.pla(x_train, y_train, update = 50,epoch = 2000, shuffle = True,
+                 x_val = x_test, y_val = y_test)

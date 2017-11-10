@@ -1,28 +1,40 @@
 import numpy as np
 
-def pla(x, y, lr = 1, epoch = 2000, shuffle = True):
+def pla(x, y, update = 10000 , lr = 1, epoch = 2000, shuffle = True, x_val = None, y_val = None):
     x = np.insert(x, 0, 1, axis = 1)
     update_ls = []
     count_update = 0
     data_num = x.shape[0]
+    val_err_ls = []
     for i in range(epoch):
         if shuffle:
             x, y = _shuffle(x, y)
         w = np.zeros(x.shape[1])
         count_correct = 0
+        # up = 0
         j = 0
-        while count_correct < data_num:
+        while (count_correct < data_num) and (count_update < update):
             hypothesis = sign(w, x[j])
             if  hypothesis != y[j]:
-                w = w + y[j] * x[j]
+                w = w + lr * y[j] * x[j]
                 count_update += 1
                 count_correct = 0
             else:
                 count_correct +=1
             j = (j+1) % data_num
-        print('epoch', i+1, '\t | PLA update:', count_update)
+            # up += 1
+        if x_val != None and y_val != None:
+            y_val_pred = predict(x_val, w[0], w[1:]) 
+            val_err = err_rate(y_val, y_val_pred)
+            val_err_ls.append(val_err)
+            print('epoch:', i+1, '\t | PLA update:', count_update, '\t | val_error rate:', val_err)
+        else:
+            print('epoch:', i+1, '\t | PLA update:', count_update)
         update_ls.append(count_update)
         count_update = 0
+    if x_val != None and y_val != None:
+        val_err_avg = sum(val_err_ls) / epoch
+        print('val error:', val_err_avg)
     update_avg = sum(update_ls) / epoch
     print(update_avg)
     return w[0], w[1:]
@@ -64,9 +76,11 @@ def pocket(x, y, update = 50, epoch = 2000, shuffle = True, x_val = None, y_val 
             y_val_pred = predict(x_val, w_bst[0], w_bst[1:]) 
             val_err = err_rate(y_val, y_val_pred)
             val_err_ls.append(val_err)
+            print('epoch:', i+1, '\t | error rate:', 
+                    err_bst, '\t | val_error rate:', val_err)        
+        else:
+            print('epoch:', i+1, '\t | error rate:', err_bst)
 
-        print('epoch:', i+1, '\t | error rate:', 
-                err_bst, '\t | val_error rate:', val_err)        
 
     train_err_rate = sum(err_ls) / epoch
     val_err_rate = sum(val_err_ls) / epoch

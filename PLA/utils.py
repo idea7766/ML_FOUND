@@ -12,3 +12,8 @@ def load_data(path):
         data = data[:, :5].astype(np.float)
     return data
     
+# class record:
+#     def __init__(self):
+#         self.num_frequency = {}
+#     def count(self, number):
+        

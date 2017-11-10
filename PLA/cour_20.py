@@ -15,6 +15,5 @@ x_test, y_test = data_test[:, :4], data_test[:, -1]
 # print(x_train)
 # print(y_train)
 
-b, w = model.pocket(x_train, y_train, epoch = 2000, shuffle = True, 
-                    x_val = x_test, y_val = y_test)
-                    
+b, w = model.pocket(x_train, y_train, update = 100,epoch = 2000, shuffle = True,
+                 x_val = x_test, y_val = y_test)
