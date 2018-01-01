@@ -1,5 +1,6 @@
 import numpy as np
 import models
+import matplotlib.pyplot as plt
 
 def main():
     x1, x2, y = generate_data()
@@ -11,16 +12,19 @@ def main():
     b_total = 0
     w_total =np.zeros(5)
     for _ in range(1000):
-        x1_out, x2_out ,y_out = generate_data(noise_rate=0)
-        y_pred = model.predict_binary(x)
+        x1_out, x2_out ,y_out = generate_data()
+        x_out = fea_trans(x1_out, x2_out)        
+        y_pred = model.predict_binary(x_out)
 
-        w_total += model.w
-        b_total += model.b
-        err_ls.append(count_err(y, y_pred))
+        err_ls.append(count_err(y_out, y_pred))
     print('error rate:',sum(err_ls) / len(err_ls))
-    print('avg. bias:',b_total/1000)
-    print('avg. w:',w_total/1000)
     
+    plt.xlabel('Eout')
+    plt.ylabel('Frequency')
+    plt.title('7. Error Rate')
+    plt.hist(err_ls)
+    plt.grid(True) 
+    plt.show()
     
 
 def generate_data(min=-1, max =1, num_data =1000, noise_rate = 0.1):
