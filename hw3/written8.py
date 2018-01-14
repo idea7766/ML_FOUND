@@ -54,7 +54,7 @@ def main():
         plt.xlabel('Iteration', **font)
         plt.plot(epoch, gd.log_out, label = 'GD')
         plt.plot(epoch, sgd.log_out, label = 'SGD')
-        plt.legend(loc='lower right', shadow=True, fontsize='x-large')
+        plt.legend(loc='lower rigdht', shadow=True, fontsize='x-large')
         plt.show()
 
 def count_err(y, y_pred):
